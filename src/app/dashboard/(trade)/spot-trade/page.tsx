@@ -5,7 +5,7 @@ import OrderBook from '@/components/trading/spot-trading/OrderBook';
 import TradeForm from '@/components/trading/spot-trading/TradeForm';
 import OrderTabs from '@/components/trading/spot-trading/TradingFooter';
 import TradingChart from '@/components/trading/spot-trading/TradingChart';
-import { initializeSocket } from '@/lib/socket';
+import { apiRequest } from '@/lib/api';
 
 function TradingPageContent() {
   // 1. Manage the active view state here
@@ -15,20 +15,20 @@ function TradingPageContent() {
   const quoteParam = searchParams?.get('quote') || 'USDT';
   const [marketInfo, setMarketInfo] = useState<any>(null);
 
-  // subscribe to category market updates and filter for the selected asset
+  // Poll crypto prices via REST every 15s
   useEffect(() => {
     const assetBase = assetParam.split('/')[0];
-    const socket = initializeSocket();
-    socket.emit('subscribe-market', 'crypto');
-    const handler = (data: any) => {
-      if (data && data[assetBase]) {
-        setMarketInfo(data[assetBase]);
-      }
+    const fetchPrice = async () => {
+      try {
+        const data = await apiRequest('/market/prices');
+        if (data && data[assetBase]) {
+          setMarketInfo(data[assetBase]);
+        }
+      } catch {}
     };
-    socket.on('market-update', handler);
-    return () => {
-      socket.off('market-update', handler);
-    };
+    fetchPrice();
+    const interval = setInterval(fetchPrice, 15000);
+    return () => clearInterval(interval);
   }, [assetParam]);
 
   return (

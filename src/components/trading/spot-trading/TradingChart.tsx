@@ -3,7 +3,7 @@ import React, { useMemo, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 import { FaChartLine } from "react-icons/fa";
-import { initializeSocket } from "@/lib/socket";
+import { apiRequest } from "@/lib/api";
 import { MdOutlineOpenInFull, MdOutlineGridView } from "react-icons/md";
 import { IoEyeOutline, IoSettingsOutline } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
@@ -30,22 +30,22 @@ export default function TradingChart({ activeView, symbol = "BTC/USDT" }: Tradin
   // store last price series to update annotation
   const [lastPrice, setLastPrice] = useState<number>(hoverData.close);
 
-  // subscribe to socket updates for selected symbol
+  // Poll crypto prices via REST every 15s
   useEffect(() => {
     const assetBase = symbol.split('/')[0];
-    const socket = initializeSocket();
-    socket.emit('subscribe-market', 'crypto');
-    const handler = (data: any) => {
-      if (data && data[assetBase]) {
-        const price = data[assetBase].usd;
-        setLastPrice(price);
-        setHoverData((h) => ({ ...h, close: price }));
-      }
+    const fetchPrice = async () => {
+      try {
+        const data = await apiRequest('/market/prices');
+        if (data && data[assetBase]) {
+          const price = data[assetBase].usd;
+          setLastPrice(price);
+          setHoverData((h) => ({ ...h, close: price }));
+        }
+      } catch {}
     };
-    socket.on('market-update', handler);
-    return () => {
-      socket.off('market-update', handler);
-    };
+    fetchPrice();
+    const interval = setInterval(fetchPrice, 15000);
+    return () => clearInterval(interval);
   }, [symbol]);
 
   const { candles, volume } = useMemo(() => {

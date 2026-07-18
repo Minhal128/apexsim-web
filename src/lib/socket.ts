@@ -6,25 +6,21 @@ export const initializeSocket = () => {
   if (socket) return socket;
 
   // Connect to the backend server
-  socket = io('http://localhost:5001', {
+  const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'https://apexsim-backend.onrender.com';
+  socket = io(SOCKET_URL, {
     reconnection: true,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
-    reconnectionAttempts: 5,
-    transports: ['websocket', 'polling'],
+    reconnectionAttempts: 10,
+    transports: ['websocket'],
+    upgrade: false,
   });
 
-  socket.on('connect', () => {
-    console.log('Connected to WebSocket server');
-  });
+  socket.on('connect', () => {});
 
-  socket.on('disconnect', () => {
-    console.log('Disconnected from WebSocket server');
-  });
+  socket.on('disconnect', () => {});
 
-  socket.on('error', (error) => {
-    console.error('Socket error:', error);
-  });
+  socket.on('error', () => {});
 
   return socket;
 };

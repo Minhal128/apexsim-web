@@ -4,7 +4,7 @@ import { FileText } from 'lucide-react';
 import { FaPlayCircle } from "react-icons/fa";
 import { FaSearch } from "react-icons/fa";
 import { useRouter } from 'next/navigation';
-import { initializeSocket, getSocket } from '@/lib/socket';
+import { apiRequest } from '@/lib/api';
 
 const PairIcon = ({ icons, isSingle = false }: { icons: string[]; isSingle?: boolean }) => {
     if (icons.length === 1 || isSingle) {
@@ -154,22 +154,19 @@ export default function MarketComponent() {
     const categories = ["Crypto", "Forex", "Commodities", "Stocks", "Indices"];
     const subTabs = ["Favorites", "Spot", "Futures"];
 
-    // Fetch market data based on category (REST API fallback - socket will handle updates)
+    // Fetch market data via REST API with auto-refresh every 30s
     useEffect(() => {
         const fetchMarketData = async () => {
             try {
-                setLoading(true);
-                let endpoint = '/api/market/prices'; // default
+                if (marketData.length === 0) setLoading(true);
+                let endpoint = '/api/market/prices';
                 
                 if (activeCategory === 'Forex') endpoint = '/api/market/forex';
                 else if (activeCategory === 'Commodities') endpoint = '/api/market/commodities';
                 else if (activeCategory === 'Stocks') endpoint = '/api/market/stocks';
                 else if (activeCategory === 'Indices') endpoint = '/api/market/indices';
                 
-                const response = await fetch(`http://localhost:5001${endpoint}`);
-                const data = await response.json();
-                
-                // Use the socket update function for consistent formatting
+                const data = await apiRequest(endpoint.replace('/api', ''));
                 updateMarketDataFromSocket(data);
                 setLoading(false);
             } catch (err) {
@@ -179,45 +176,8 @@ export default function MarketComponent() {
         };
 
         fetchMarketData();
-    }, [activeCategory]);
-
-    // Connect to Socket.io for real-time updates
-    useEffect(() => {
-        const socket = initializeSocket();
-        
-        // Subscribe to market updates for the current category
-        const categoryMap: { [key: string]: string } = {
-            'Crypto': 'crypto',
-            'Forex': 'forex',
-            'Commodities': 'commodities',
-            'Stocks': 'stocks',
-            'Indices': 'indices'
-        };
-        
-        const socketCategory = categoryMap[activeCategory] || 'crypto';
-        socket?.emit('subscribe-market', socketCategory);
-        
-        // Listen for initial market data
-        socket?.on('market-data', (data: any) => {
-            console.log('📊 Received initial market data for', activeCategory, ':', Object.keys(data).length, 'items');
-            updateMarketDataFromSocket(data);
-        });
-
-        // Listen for real-time market updates
-        socket?.on('market-update', (data: any) => {
-            console.log('📈 Received real-time market update for', activeCategory);
-            updateMarketDataFromSocket(data);
-        });
-
-        socket?.on('error', (error: any) => {
-            console.error('Socket error:', error);
-        });
-
-        return () => {
-            socket?.off('market-data');
-            socket?.off('market-update');
-            socket?.off('error');
-        };
+        const interval = setInterval(fetchMarketData, 30000);
+        return () => clearInterval(interval);
     }, [activeCategory]);
 
     // Helper function to update market data from socket
