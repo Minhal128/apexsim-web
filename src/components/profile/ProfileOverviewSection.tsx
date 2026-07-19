@@ -150,7 +150,7 @@ export default function ProfileOverview({ user, wallet, onDeposit, onWithdraw }:
           <div className="flex items-center gap-2">
             <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-700">
               <img
-                src={user?.avatar || "/images/manimage.png"}
+                src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "User")}&background=00B595&color=fff`}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />

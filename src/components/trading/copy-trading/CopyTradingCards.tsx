@@ -32,7 +32,7 @@ const TraderCard = ({ trader, onCopy }: TraderCardProps) => {
     aum: 740567.24,
     mdd: 36.98,
     sharpeRatio: 1.87,
-    avatar: "/images/manimage.png",
+    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent("Trader 1")}&background=00B595&color=fff`,
   };
 
   const traderData = trader || defaultTrader;
@@ -66,10 +66,11 @@ const TraderCard = ({ trader, onCopy }: TraderCardProps) => {
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10">
             <img 
-              src={traderData.avatar || "/images/manimage.png"} 
-              alt="avatar"
+              src={traderData.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(traderData.name || "Trader")}&background=00B595&color=fff`} 
+              alt={traderData.name || "Trader"} 
+              className="w-full h-full object-cover" 
               onError={(e) => {
-                e.currentTarget.src = "/images/manimage.png";
+                e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(traderData.name || "Trader")}&background=00B595&color=fff`;
               }}
             />
           </div>

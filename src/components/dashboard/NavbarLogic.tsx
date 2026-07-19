@@ -243,7 +243,7 @@ export default function Navbar() {
               >
                 <img
                   src={
-                    userProfile?.avatar || "/images/manimage.png"
+                    userProfile?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(getDisplayName())}&background=00B595&color=fff`
                   }
                   alt="Profile"
                   className="w-9 h-9 rounded-full border-2 border-white/10 object-cover"
@@ -296,7 +296,7 @@ export default function Navbar() {
           <Link href="/dashboard/profile" onClick={closeMobileMenu}>
             <div className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/10 mb-6 cursor-pointer hover:bg-white/10 transition-colors">
               <img
-                src={userProfile?.avatar || "/images/manimage.png"}
+                src={userProfile?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(getDisplayName())}&background=00B595&color=fff`}
                 alt="Profile"
                 className="w-12 h-12 rounded-full border-2 border-white/20 object-cover"
               />

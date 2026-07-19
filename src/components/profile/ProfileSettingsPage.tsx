@@ -54,7 +54,7 @@ export default function ProfileSettings({ user }: ProfileSettingsProps) {
   const [orderConfirmation, setOrderConfirmation] = useState(user?.preferences?.orderConfirmation ?? true);
 
   const avatars = [
-    "/images/manimage.png",
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "User")}&background=00B595&color=fff`,
     "https://cryptologos.cc/logos/bitcoin-btc-logo.png",
     "https://cryptologos.cc/logos/ethereum-eth-logo.png",
     "https://cryptologos.cc/logos/tether-usdt-logo.png",
