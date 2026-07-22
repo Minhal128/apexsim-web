@@ -53,17 +53,7 @@ export default function ProfileSettings({ user }: ProfileSettingsProps) {
 
   const [orderConfirmation, setOrderConfirmation] = useState(user?.preferences?.orderConfirmation ?? true);
 
-  const avatars = [
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "User")}&background=00B595&color=fff`,
-    "https://cryptologos.cc/logos/bitcoin-btc-logo.png",
-    "https://cryptologos.cc/logos/ethereum-eth-logo.png",
-    "https://cryptologos.cc/logos/tether-usdt-logo.png",
-    "https://cryptologos.cc/logos/solana-sol-logo.png",
-    "https://cryptologos.cc/logos/binance-coin-bnb-logo.png",
-    "https://cryptologos.cc/logos/cardano-ada-logo.png",
-    "https://cryptologos.cc/logos/ripple-xrp-logo.png",
-    "https://cryptologos.cc/logos/dogecoin-doge-logo.png",
-  ];
+
 
   const handleUpdateProfile = async (updates: any) => {
     setLoading(true);
@@ -203,16 +193,13 @@ export default function ProfileSettings({ user }: ProfileSettingsProps) {
                 </label>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4 max-h-80 overflow-y-auto p-1 custom-scrollbar">
-              {avatars.map((url, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => handleUpdateAvatar(url)}
-                  className={`p-2 rounded-lg border-2 transition-all ${user?.avatar === url ? 'border-blue-500 bg-white/5' : 'border-transparent hover:border-white/20'}`}
-                >
-                  <img src={url} alt={`Avatar ${idx}`} className="w-full aspect-square object-cover rounded-full" />
-                </button>
-              ))}
+            <div className="flex flex-col items-center justify-center py-6">
+              <img 
+                src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "User")}&background=00B595&color=fff`} 
+                alt="Current Avatar" 
+                className="w-32 h-32 object-cover rounded-full border-2 border-white/20 mb-4" 
+              />
+              <p className="text-gray-400 text-sm">Upload a new image to replace your current avatar.</p>
             </div>
             {loading && <p className="text-center text-sm text-blue-500">Updating...</p>}
             <div className="flex justify-end">
