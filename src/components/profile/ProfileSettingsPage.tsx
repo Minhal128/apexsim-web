@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { apiRequest } from '@/lib/api';
 import { useToast } from '@/components/ToastContext';
 import { LuEye, LuSearch, LuCopy } from "react-icons/lu";
-import { FaAddressCard } from "react-icons/fa";
+import { FaAddressCard, FaPhone, FaGlobe, FaInfoCircle } from "react-icons/fa";
 import { IoPersonSharp } from "react-icons/io5";
 import { AiFillProfile } from "react-icons/ai";
 
@@ -47,7 +47,15 @@ interface ProfileSettingsProps {
 export default function ProfileSettings({ user }: ProfileSettingsProps) {
   const [showNicknameModal, setShowNicknameModal] = useState(false);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [showPhoneModal, setShowPhoneModal] = useState(false);
+  const [showCountryModal, setShowCountryModal] = useState(false);
+  const [showBioModal, setShowBioModal] = useState(false);
+
   const [nickname, setNickname] = useState(user?.name || "");
+  const [phone, setPhone] = useState(user?.phone || "");
+  const [country, setCountry] = useState(user?.country || "");
+  const [bio, setBio] = useState(user?.bio || "");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -73,6 +81,9 @@ export default function ProfileSettings({ user }: ProfileSettingsProps) {
 
   const handleUpdateNickname = () => handleUpdateProfile({ name: nickname });
   const handleUpdateAvatar = (avatar: string) => handleUpdateProfile({ avatar });
+  const handleUpdatePhone = () => handleUpdateProfile({ phone });
+  const handleUpdateCountry = () => handleUpdateProfile({ country });
+  const handleUpdateBio = () => handleUpdateProfile({ bio });
   const handleToggleOrderConfirmation = () => {
     const newVal = !orderConfirmation;
     setOrderConfirmation(newVal);
@@ -121,6 +132,33 @@ export default function ProfileSettings({ user }: ProfileSettingsProps) {
               actionText="Edit"
               onClick={() => setShowAvatarModal(true)}
             />
+
+            <PreferenceRow
+              icon={<FaPhone />}
+              title="Phone Number"
+              description="Update your contact phone number"
+              value={user?.phone || "Not set"}
+              actionText="Edit"
+              onClick={() => setShowPhoneModal(true)}
+            />
+
+            <PreferenceRow
+              icon={<FaGlobe />}
+              title="Country"
+              description="Update your country of residence"
+              value={user?.country || "Not set"}
+              actionText="Edit"
+              onClick={() => setShowCountryModal(true)}
+            />
+
+            <PreferenceRow
+              icon={<FaInfoCircle />}
+              title="Bio"
+              description="Add a short bio about yourself"
+              value={user?.bio || "Not set"}
+              actionText="Edit"
+              onClick={() => setShowBioModal(true)}
+            />
           </div>
         </section>
 
@@ -161,6 +199,96 @@ export default function ProfileSettings({ user }: ProfileSettingsProps) {
               <button onClick={() => { setShowNicknameModal(false); setError(""); }} className="flex-1 py-3 text-sm font-semibold text-gray-400 hover:text-white transition-colors">Cancel</button>
               <button
                 onClick={handleUpdateNickname}
+                disabled={loading}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 py-3 rounded-lg text-sm font-semibold"
+              >
+                {loading ? "Saving..." : "Save Change"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Phone Modal */}
+      {showPhoneModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[#181818] border border-white/10 p-6 rounded-xl max-w-sm w-full space-y-4">
+            <h3 className="text-xl font-bold">Edit Phone Number</h3>
+            <div className="space-y-2">
+              <label className="text-xs text-gray-500">Phone</label>
+              <input
+                type="text"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Your phone number"
+                className="w-full bg-[#222] border border-white/5 rounded-lg py-3 px-4 focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            {error && <p className="text-red-500 text-xs">{error}</p>}
+            <div className="flex gap-3">
+              <button onClick={() => { setShowPhoneModal(false); setError(""); }} className="flex-1 py-3 text-sm font-semibold text-gray-400 hover:text-white transition-colors">Cancel</button>
+              <button
+                onClick={handleUpdatePhone}
+                disabled={loading}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 py-3 rounded-lg text-sm font-semibold"
+              >
+                {loading ? "Saving..." : "Save Change"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Country Modal */}
+      {showCountryModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[#181818] border border-white/10 p-6 rounded-xl max-w-sm w-full space-y-4">
+            <h3 className="text-xl font-bold">Edit Country</h3>
+            <div className="space-y-2">
+              <label className="text-xs text-gray-500">Country</label>
+              <input
+                type="text"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                placeholder="Your country"
+                className="w-full bg-[#222] border border-white/5 rounded-lg py-3 px-4 focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            {error && <p className="text-red-500 text-xs">{error}</p>}
+            <div className="flex gap-3">
+              <button onClick={() => { setShowCountryModal(false); setError(""); }} className="flex-1 py-3 text-sm font-semibold text-gray-400 hover:text-white transition-colors">Cancel</button>
+              <button
+                onClick={handleUpdateCountry}
+                disabled={loading}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 py-3 rounded-lg text-sm font-semibold"
+              >
+                {loading ? "Saving..." : "Save Change"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bio Modal */}
+      {showBioModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[#181818] border border-white/10 p-6 rounded-xl max-w-sm w-full space-y-4">
+            <h3 className="text-xl font-bold">Edit Bio</h3>
+            <div className="space-y-2">
+              <label className="text-xs text-gray-500">Bio</label>
+              <textarea
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                placeholder="A short bio"
+                className="w-full bg-[#222] border border-white/5 rounded-lg py-3 px-4 focus:outline-none focus:border-blue-500"
+                rows={4}
+              />
+            </div>
+            {error && <p className="text-red-500 text-xs">{error}</p>}
+            <div className="flex gap-3">
+              <button onClick={() => { setShowBioModal(false); setError(""); }} className="flex-1 py-3 text-sm font-semibold text-gray-400 hover:text-white transition-colors">Cancel</button>
+              <button
+                onClick={handleUpdateBio}
                 disabled={loading}
                 className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 py-3 rounded-lg text-sm font-semibold"
               >
