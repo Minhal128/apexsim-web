@@ -6,6 +6,15 @@ import { FaAddressCard, FaPhone, FaGlobe, FaInfoCircle } from "react-icons/fa";
 import { IoPersonSharp } from "react-icons/io5";
 import { AiFillProfile } from "react-icons/ai";
 
+const countriesList = [
+  { code: "US", label: "United States" },
+  { code: "UK", label: "United Kingdom" },
+  { code: "CA", label: "Canada" },
+  { code: "AU", label: "Australia" },
+  { code: "IN", label: "India" },
+  { code: "PK", label: "Pakistan" },
+];
+
 interface PreferenceRowProps {
   icon: React.ReactNode;
   title: string;
@@ -246,13 +255,16 @@ export default function ProfileSettings({ user }: ProfileSettingsProps) {
             <h3 className="text-xl font-bold">Edit Country</h3>
             <div className="space-y-2">
               <label className="text-xs text-gray-500">Country</label>
-              <input
-                type="text"
+              <select
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
-                placeholder="Your country"
-                className="w-full bg-[#222] border border-white/5 rounded-lg py-3 px-4 focus:outline-none focus:border-blue-500"
-              />
+                className="w-full bg-[#222] border border-white/5 rounded-lg py-3 px-4 focus:outline-none focus:border-blue-500 text-white"
+              >
+                <option value="" disabled>Select your country</option>
+                {countriesList.map((c) => (
+                  <option key={c.code} value={c.code}>{c.label}</option>
+                ))}
+              </select>
             </div>
             {error && <p className="text-red-500 text-xs">{error}</p>}
             <div className="flex gap-3">
