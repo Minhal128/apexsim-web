@@ -6,10 +6,12 @@ import FuturesSection from "./FuturesSection";
 import BotSection from "./BotSections";
 import { useRouter } from "next/navigation";
 import WithdrawModal from "@/components/dashboard/WithdrawModel";
+import TransferModal from "@/components/dashboard/TransferModal";
 
 export default function WalletSectionPage() {
   const [activeTab, setActiveTab] = useState("Overview");
   const [showWithdraw, setShowWithdraw] = useState(false);
+  const [showTransfer, setShowTransfer] = useState(false);
   const router = useRouter();
 
   const tabs = ["Overview", "Spot Account", "Futures", "Bot"];
@@ -34,7 +36,10 @@ export default function WalletSectionPage() {
               >
                 Withdraw
               </button>
-              <button className="w-full rounded-sm bg-[#1D1D1D] px-3 py-2 text-sm">
+              <button 
+                onClick={() => setShowTransfer(true)}
+                className="w-full rounded-sm bg-[#1D1D1D] px-3 py-2 text-sm hover:bg-[#252525] transition-colors"
+              >
                 Transfer
               </button>
               <button className="w-full rounded-sm bg-[#1D1D1D] px-3 py-2 text-sm">
@@ -76,6 +81,7 @@ export default function WalletSectionPage() {
       </div>
 
       <WithdrawModal open={showWithdraw} onClose={() => setShowWithdraw(false)} />
+      <TransferModal open={showTransfer} onClose={() => setShowTransfer(false)} />
     </div>
   );
 }
